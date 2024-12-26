@@ -10,7 +10,7 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.Collections;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +18,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/**
+ * Filter that validates the access token (JWT) in the header of incoming requests.
+ * <p>
+ * Validation is done via the public key set as application property: {@code jwt.public-key-base64}.
+ */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -34,26 +39,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
-    var token = request.getHeader("Authorization");
-    if (token != null && token.startsWith("Bearer ")) {
-      token = token.substring(7);
-      try {
-        var claims = Jwts.parserBuilder()
-            .setSigningKey(publicKey)
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
-
-        var email = claims.getSubject();
-        var authentication = new UsernamePasswordAuthenticationToken(email, null, Collections.emptyList());
-        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-      } catch (Exception e) {
-        SecurityContextHolder.clearContext();
-      }
+    var authToken = request.getHeader("Authorization");
+    if (authToken != null && authToken.startsWith("Bearer ")) {
+      validateAuthToken(request, authToken);
     }
 
     filterChain.doFilter(request, response);
+  }
+
+  private void validateAuthToken(HttpServletRequest request, String authToken) {
+    var jwt = authToken.substring(7);
+    try {
+      var claims = Jwts.parserBuilder()
+          .setSigningKey(publicKey)
+          .build()
+          .parseClaimsJws(jwt)
+          .getBody();
+
+      var email = claims.getSubject();
+      var authentication = new UsernamePasswordAuthenticationToken(email, null, List.of());
+      authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+      SecurityContextHolder.getContext().setAuthentication(authentication);
+    } catch (Exception e) {
+      SecurityContextHolder.clearContext();
+    }
   }
 }
