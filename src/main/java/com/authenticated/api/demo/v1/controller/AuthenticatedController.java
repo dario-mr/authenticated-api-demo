@@ -13,6 +13,6 @@ public class AuthenticatedController {
   @GetMapping("hello-world")
   @Operation(security = @SecurityRequirement(name = "Authorization"))
   public String helloWorld() {
-    return "Hello World";
+    return "Authenticated Hello World";
   }
 }

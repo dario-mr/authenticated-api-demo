@@ -13,7 +13,7 @@
 	<groupId>com.authenticated-api</groupId>
 	<artifactId>demo</artifactId>
 	<version>0.0.1</version>
-	<description>Demo to authenticate API endpoints via JWT</description>
+	<description>Demo application to showcase the usage of JWTs for endpoint authentication</description>
 
 	<properties>
 		<java.version>21</java.version>

@@ -22,7 +22,7 @@ public class SwaggerConfig {
         .info(new Info()
             .title("Authenticated API")
             .version("0.0.1")
-            .description("Demo API that requires authentication"));
+            .description("Demo application to showcase the usage of JWTs for endpoint authentication."));
   }
 
 }
