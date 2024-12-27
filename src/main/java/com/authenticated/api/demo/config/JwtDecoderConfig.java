@@ -12,6 +12,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 
+/**
+ * Reads the JWT public key from the property {@code jwt.public-key-base64} and decodes it.
+ * <p>
+ * The {@code jwtDecoder()} bean is automatically used by {@code oauth2ResourceServer(...)} in {@link SecurityConfig}.
+ */
 @Configuration
 public class JwtDecoderConfig {
 
