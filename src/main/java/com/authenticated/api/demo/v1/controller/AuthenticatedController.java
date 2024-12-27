@@ -10,11 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("v1")
 public class AuthenticatedController {
 
-  @GetMapping("public/hello-world")
-  public String publicHelloWorld() {
-    return "Public Hello World";
-  }
-
   @GetMapping("hello-world")
   @Operation(security = @SecurityRequirement(name = "Authorization"))
   public String helloWorld() {
